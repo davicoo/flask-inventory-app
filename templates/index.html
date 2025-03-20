@@ -3,20 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Art Inventory</title>
+    <title>Art Inventory Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-    <h1>Art Inventory Dashboard</h1>
-    
-    <form id="addArtworkForm">
-        <input type="text" id="title" placeholder="Title" required>
-        <input type="text" id="location" placeholder="Location" required>
-        <input type="number" id="price" placeholder="Price">
-        <button type="submit">Add Artwork</button>
-    </form>
+<body class="container py-4 bg-light">
 
-    <h2>Artworks</h2>
-    <ul id="artworkList"></ul>
+    <h1 class="text-center">Art Inventory Dashboard</h1>
+
+    <div class="card p-4 shadow">
+        <h2>Add Artwork</h2>
+        <form id="addArtworkForm" class="row g-3">
+            <div class="col-md-4">
+                <input type="text" id="title" class="form-control" placeholder="Title" required>
+            </div>
+            <div class="col-md-4">
+                <input type="text" id="location" class="form-control" placeholder="Location" required>
+            </div>
+            <div class="col-md-4">
+                <input type="number" id="price" class="form-control" placeholder="Price">
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-success">Add Artwork</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="card p-4 shadow mt-4">
+        <h2>Artworks</h2>
+        <ul id="artworkList" class="list-group"></ul>
+    </div>
 
     <script>
         document.getElementById('addArtworkForm').addEventListener('submit', function(event) {
@@ -31,7 +47,7 @@
                 })
             }).then(response => response.json()).then(data => {
                 alert("Artwork added!");
-                location.reload();
+                fetchArtworks();
             });
         });
 
@@ -43,11 +59,13 @@
                     artworkList.innerHTML = "";
                     data.forEach(artwork => {
                         artworkList.innerHTML += `
-                            <li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
                                 ${artwork.title} - ${artwork.location} - $${artwork.price} 
-                                [${artwork.status}]
-                                <button onclick="sell(${artwork.id})">Mark as Sold</button>
-                                <button onclick="pay(${artwork.id})">Mark as Paid</button>
+                                <span class="badge bg-${artwork.status === 'Sold' ? 'danger' : 'primary'}">${artwork.status}</span>
+                                <div>
+                                    <button class="btn btn-warning btn-sm" onclick="sell(${artwork.id})">Mark as Sold</button>
+                                    <button class="btn btn-success btn-sm" onclick="pay(${artwork.id})">Mark as Paid</button>
+                                </div>
                             </li>`;
                     });
                 });
@@ -67,5 +85,8 @@
 
         fetchArtworks();
     </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
