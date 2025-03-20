@@ -25,7 +25,11 @@ with app.app_context():
 
 # Serve the Web UI
 @app.route('/')
-def index():
+def welcome():
+    return render_template('welcome.html')
+
+@app.route('/dashboard')
+def dashboard():
     return render_template('index.html')
 
 # API: Add artwork
