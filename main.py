@@ -1,10 +1,10 @@
-from flask import Flask, request, jsonify, render_template
+]from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 import os
 
 app = Flask(__name__)
 
-# Database setup (PostgreSQL on Railway, SQLite locally)
+# Database setup
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL", "sqlite:///art_inventory.db")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
@@ -23,10 +23,10 @@ class Artwork(db.Model):
 with app.app_context():
     db.create_all()
 
-# Homepage
+# Serve the Web UI
 @app.route('/')
 def index():
-    return jsonify({"message": "Welcome to your Inventory App!"})
+    return render_template('index.html')
 
 # API: Add artwork
 @app.route('/add', methods=['POST'])
