@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Art Inventory</title>
+</head>
+<body>
+    <h1>Art Inventory Dashboard</h1>
+    <form id="addArtworkForm">
+        <input type="text" id="title" placeholder="Title" required>
+        <input type="text" id="location" placeholder="Location" required>
+        <input type="number" id="price" placeholder="Price">
+        <button type="submit">Add Artwork</button>
+    </form>
+    
+    <h2>Artworks</h2>
+    <ul id="artworkList"></ul>
+
+    <script>
+        document.getElementById('addArtworkForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            fetch('/add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    title: document.getElementById('title').value,
+                    location: document.getElementById('location').value,
+                    price: document.getElementById('price').value
+                })
+            }).then(response => response.json()).then(data => {
+                alert("Artwork added!");
+                location.reload();
+            });
+        });
+
+        function fetchArtworks() {
+            fetch('/artworks')
+                .then(response => response.json())
+                .then(data => {
+                    let artworkList = document.getElementById('artworkList');
+                    artworkList.innerHTML = "";
+                    data.forEach(artwork => {
+                        artworkList.innerHTML += `
+                            <li>
+                                ${artwork.title} - ${artwork.location} - $${artwork.price} 
+                                [${artwork.status}]
+                                <button onclick="sell(${artwork.id})">Mark as Sold</button>
+                                <button onclick="pay(${artwork.id})">Mark as Paid</button>
+                            </li>`;
+                    });
+                });
+        }
+
+        function sell(id) {
+            fetch(`/sell/${id}`, { method: 'PUT' })
+                .then(response => response.json())
+                .then(() => fetchArtworks());
+        }
+
+        function pay(id) {
+            fetch(`/pay/${id}`, { method: 'PUT' })
+                .then(response => response.json())
+                .then(() => fetchArtworks());
+        }
+
+        fetchArtworks();
+    </script>
+</body>
+</html>
